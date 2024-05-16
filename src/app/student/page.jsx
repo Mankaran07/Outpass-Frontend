@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,12 @@ import {
 } from "@/components/ui/select";
 
 const page = () => {
+  const handleKeyPress = (e) => {
+    const allowedKeys = /[0-9\b]/;
+    if (!allowedKeys.test(e.key)) {
+      e.preventDefault();
+    }
+  };
   return (
     <div className="mx-[100px]">
       <div className="flex justify-center items-center my-[100px]">
@@ -82,6 +89,15 @@ const page = () => {
                     id="reg_no"
                     type="password"
                     placeholder="Enter Your Password"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="mobile">Mobile No.</Label>
+                  <Input
+                    id="password"
+                    onKeyPress={handleKeyPress}
+                    maxLength="10"
+                    placeholder="Enter Your Mobile No."
                   />
                 </div>
                 <div className="grid grid-cols-2 pt-[10px]">
