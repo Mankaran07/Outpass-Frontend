@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,12 +20,55 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const page = () => {
+const Student = () => {
+  const register = {
+    name: "",
+    reg_no: "",
+    room: "",
+    password: "",
+    mobile: "",
+    block: "",
+    course: "",
+  };
+
+  const login = {
+    reg_no: "",
+    password: "",
+  };
+
+  const [registerForm, setRegisterForm] = useState(register);
+  const [loginForm, setLoginForm] = useState(login);
+
+  const handleRegisterChange = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setRegisterForm((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleLoginChange = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setLoginForm((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const handleKeyPress = (e) => {
     const allowedKeys = /[0-9\b]/;
     if (!allowedKeys.test(e.key)) {
       e.preventDefault();
     }
+  };
+  const handleRegisterSubmit = () => {
+    console.log(registerForm);
+  };
+
+  const handleLoginSubmit = () => {
+    console.log(loginForm);
   };
   return (
     <div className="mx-[100px]">
@@ -45,6 +88,8 @@ const page = () => {
                   <Label htmlFor="reg_no">Registeration Number</Label>
                   <Input
                     id="reg_no"
+                    name="reg_no"
+                    onChange={handleLoginChange}
                     placeholder="Enter Your Registeration Number"
                   />
                 </div>
@@ -53,12 +98,16 @@ const page = () => {
                   <Input
                     id="password"
                     type="password"
+                    name="password"
+                    onChange={handleLoginChange}
                     placeholder="Enter Your Password"
                   />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="mx-auto">Log In</Button>
+                <Button className="mx-auto" onClick={handleLoginSubmit}>
+                  Log In
+                </Button>
               </CardFooter>
             </Card>
           </TabsContent>
@@ -70,38 +119,64 @@ const page = () => {
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Enter Your Name" />
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Enter Your Name"
+                    onChange={handleRegisterChange}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="reg_no">Registeration Number</Label>
                   <Input
                     id="reg_no"
+                    name="reg_no"
+                    onKeyPress={handleKeyPress}
                     placeholder="Enter Your Registeration Number"
+                    onChange={handleRegisterChange}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="room">Room Number</Label>
-                  <Input id="reg_no" placeholder="Enter Your Room Number" />
+                  <Input
+                    id="room"
+                    name="room"
+                    onKeyPress={handleKeyPress}
+                    placeholder="Enter Your Room Number"
+                    maxLength={3}
+                    onChange={handleRegisterChange}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="password">Password</Label>
                   <Input
-                    id="reg_no"
+                    id="password"
                     type="password"
+                    name="password"
                     placeholder="Enter Your Password"
+                    onChange={handleRegisterChange}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="mobile">Mobile No.</Label>
                   <Input
-                    id="password"
+                    id="mobile"
                     onKeyPress={handleKeyPress}
                     maxLength="10"
                     placeholder="Enter Your Mobile No."
+                    onChange={handleRegisterChange}
+                    name="mobile"
                   />
                 </div>
                 <div className="grid grid-cols-2 pt-[10px]">
-                  <Select>
+                  <Select
+                    onValueChange={(value) =>
+                      setRegisterForm((prevState) => ({
+                        ...prevState,
+                        block: value,
+                      }))
+                    }
+                  >
                     <SelectTrigger className="w-[173px]">
                       <SelectValue placeholder="Block" />
                     </SelectTrigger>
@@ -113,7 +188,14 @@ const page = () => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <Select>
+                  <Select
+                    onValueChange={(value) =>
+                      setRegisterForm((prevState) => ({
+                        ...prevState,
+                        course: value,
+                      }))
+                    }
+                  >
                     <SelectTrigger className="w-[173px]">
                       <SelectValue placeholder="Course" />
                     </SelectTrigger>
@@ -130,7 +212,9 @@ const page = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="mx-auto">Register</Button>
+                <Button className="mx-auto" onClick={handleRegisterSubmit}>
+                  Register
+                </Button>
               </CardFooter>
             </Card>
           </TabsContent>
@@ -140,4 +224,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Student;

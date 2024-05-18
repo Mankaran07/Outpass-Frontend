@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +20,53 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const page = () => {
+const Hod = () => {
+  const register = {
+    name: "",
+    college_id: "",
+    password: "",
+    course: "",
+  };
+
+  const login = {
+    college_id: "",
+    password: "",
+  };
+
+  const [registerForm, setRegisterForm] = useState(register);
+  const [loginForm, setLoginForm] = useState(login);
+
+  const handleRegisterChange = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setRegisterForm((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleLoginChange = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setLoginForm((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleKeyPress = (e) => {
+    const allowedKeys = /[0-9\b]/;
+    if (!allowedKeys.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const handleRegisterSubmit = () => {
+    console.log(registerForm);
+  };
+
+  const handleLoginSubmit = () => {
+    console.log(loginForm);
+  };
   return (
     <div className="mx-[100px]">
       <div className="flex justify-center items-center my-[100px]">
@@ -36,19 +83,29 @@ const page = () => {
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="college_id">College Id</Label>
-                  <Input id="college_id" placeholder="Enter College Id" />
+                  <Input
+                    id="college_id"
+                    name="college_id"
+                    onChange={handleLoginChange}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Enter College Id"
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
+                    name="password"
+                    onChange={handleLoginChange}
                     placeholder="Enter Your Password"
                   />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="mx-auto">Log In</Button>
+                <Button className="mx-auto" onClick={handleLoginSubmit}>
+                  Log In
+                </Button>
               </CardFooter>
             </Card>
           </TabsContent>
@@ -60,23 +117,43 @@ const page = () => {
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Enter Your Name" />
+                  <Input
+                    id="name"
+                    name="name"
+                    onChange={handleRegisterChange}
+                    placeholder="Enter Your Name"
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="college_id">College Id</Label>
-                  <Input id="college_id" placeholder="Enter Your College Id" />
+                  <Input
+                    id="college_id"
+                    name="college_id"
+                    onChange={handleRegisterChange}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Enter Your College Id"
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="password">Password</Label>
                   <Input
-                    id="reg_no"
+                    id="password"
                     type="password"
+                    name="password"
+                    onChange={handleRegisterChange}
                     placeholder="Enter Your Password"
                   />
                 </div>
                 <div className="pt-[10px]">
                   <Label htmlFor="Course">Course</Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value) =>
+                      setRegisterForm((prevState) => ({
+                        ...prevState,
+                        course: value,
+                      }))
+                    }
+                  >
                     <SelectTrigger className="w-[350px]">
                       <SelectValue placeholder="Select Your Course" />
                     </SelectTrigger>
@@ -93,7 +170,9 @@ const page = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="mx-auto">Register</Button>
+                <Button className="mx-auto" onClick={handleRegisterSubmit}>
+                  Register
+                </Button>
               </CardFooter>
             </Card>
           </TabsContent>
@@ -103,4 +182,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Hod;

@@ -1,8 +1,12 @@
 import React from "react";
-import Status from "../(components)/Status";
+import StudentForm from "../(components)/StudentForm";
 
 const page = () => {
-  return <Status />;
+  return (
+    <div>
+      <StudentForm />
+    </div>
+  );
 };
 
 export default page;
