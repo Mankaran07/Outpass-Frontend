@@ -1,6 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import useAuth from "../useAuth";
+const axios = require('axios')
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+console.log(`BASE_URL: ${BASE_URL}`);
 import {
   Card,
   CardContent,
@@ -60,8 +64,23 @@ const Hod = () => {
       e.preventDefault();
     }
   };
-  const handleRegisterSubmit = () => {
+
+  const handleRegisterSubmit = async (e) => {
     console.log(registerForm);
+    const data = {
+      name: registerForm.name,
+      collegeId: registerForm.college_id,
+      password: registerForm.password,
+      course: registerForm.course,
+      type: 'hod',
+    };
+
+    try {
+      const response = await axios.post(`${BASE_URL}/register`, data);
+    } catch (error) {
+      console.log(error);
+      console.log("Something went wrong while registration");
+    }
   };
 
   const handleLoginSubmit = () => {
@@ -130,7 +149,6 @@ const Hod = () => {
                     id="college_id"
                     name="college_id"
                     onChange={handleRegisterChange}
-                    onKeyPress={handleKeyPress}
                     placeholder="Enter Your College Id"
                   />
                 </div>
@@ -159,8 +177,8 @@ const Hod = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="BTech">B.Tech</SelectItem>
-                        <SelectItem value="MTech">M.Tech</SelectItem>
+                        <SelectItem value="B.Tech">B.Tech</SelectItem>
+                        <SelectItem value="M.Tech">M.Tech</SelectItem>
                         <SelectItem value="PGDM">PGDM</SelectItem>
                         <SelectItem value="MBA">MBA</SelectItem>
                         <SelectItem value="MCA">MCA</SelectItem>
