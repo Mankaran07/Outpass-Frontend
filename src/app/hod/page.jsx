@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import useAuth from "../useAuth";
-const axios = require('axios')
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-console.log(`BASE_URL: ${BASE_URL}`);
+const axios = require("axios");
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -25,6 +24,8 @@ import {
 } from "@/components/ui/select";
 
 const Hod = () => {
+  const router = useRouter();
+  const { toast } = useToast();
   const register = {
     name: "",
     college_id: "",
@@ -66,25 +67,65 @@ const Hod = () => {
   };
 
   const handleRegisterSubmit = async (e) => {
-    console.log(registerForm);
-    const data = {
-      name: registerForm.name,
-      collegeId: registerForm.college_id,
-      password: registerForm.password,
-      course: registerForm.course,
-      type: 'hod',
-    };
-
+    e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/register`, data);
-    } catch (error) {
-      console.log(error);
-      console.log("Something went wrong while registration");
+      const result = await axios.post("http://localhost:3002/hod/register", {
+        name: registerForm.name,
+        collegeId: registerForm.college_id,
+        password: registerForm.password,
+        course: registerForm.course,
+        type: "hod",
+      });
+      const token = result.data.token;
+      localStorage.setItem("authToken", token);
+      toast({
+        duration: 3000,
+        variant: "success",
+        description: "Register Successfully.",
+      });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/");
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast({
+        duration: 3000,
+        variant: "destructive",
+        description: "Please Try Again.",
+      });
     }
   };
 
-  const handleLoginSubmit = () => {
-    console.log(loginForm);
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await axios.post("http://localhost:3002/hod/login", {
+        collegeId: loginForm.college_id,
+        password: loginForm.password,
+
+        type: "hod",
+      });
+      const token = result.data.token;
+      localStorage.setItem("authToken", token);
+      toast({
+        duration: 3000,
+        variant: "success",
+        description: "Login Successfully.",
+      });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/");
+        router.refresh();
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast({
+        duration: 3000,
+        variant: "destructive",
+        description: "Please Try Again.",
+      });
+    }
   };
   return (
     <div className="mx-[100px]">
@@ -149,6 +190,7 @@ const Hod = () => {
                     id="college_id"
                     name="college_id"
                     onChange={handleRegisterChange}
+                    onKeyPress={handleKeyPress}
                     placeholder="Enter Your College Id"
                   />
                 </div>

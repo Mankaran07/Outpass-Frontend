@@ -1,11 +1,10 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import hostel from "../assets/hostel.png";
 import FAQ from "./(components)/FAQ";
 
 export default function Home() {
   return (
-    <main className="mx-[100px] bg-zinc-50">
+    <main className="mx-[100px]">
       <div className="flex mt-[100px]">
         <div className="w-1/2">
           <h1 className="text-4xl font-extrabold text-center">

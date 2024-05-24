@@ -19,8 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const Student = () => {
+  const router = useRouter();
+  const { toast } = useToast();
   const register = {
     name: "",
     reg_no: "",
@@ -63,12 +68,71 @@ const Student = () => {
       e.preventDefault();
     }
   };
-  const handleRegisterSubmit = () => {
-    console.log(registerForm);
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await axios.post(
+        "http://localhost:3002/student/register",
+        {
+          name: registerForm.name,
+          registrationNumber: registerForm.reg_no,
+          roomNumber: registerForm.room,
+          password: registerForm.password,
+          mobileNumber: registerForm.mobile,
+          course: registerForm.course,
+          block: registerForm.block,
+          type: "student",
+        }
+      );
+      const token = result.data.token;
+      localStorage.setItem("authToken", token);
+      toast({
+        duration: 3000,
+        variant: "success",
+        description: "Register Successfully.",
+      });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/");
+        router.refresh();
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast({
+        duration: 3000,
+        variant: "destructive",
+        description: "Please Try Again.",
+      });
+    }
   };
 
-  const handleLoginSubmit = () => {
-    console.log(loginForm);
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await axios.post("http://localhost:3002/student/login", {
+        registrationNumber: loginForm.reg_no,
+        password: loginForm.password,
+        type: "student",
+      });
+      const token = result.data.token;
+      localStorage.setItem("authToken", token);
+      toast({
+        duration: 3000,
+        variant: "success",
+        description: "Login Successful.",
+      });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/");
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast({
+        duration: 3000,
+        variant: "destructive",
+        description: "Please Try Again.",
+      });
+    }
   };
   return (
     <div className="mx-[100px]">
@@ -90,6 +154,7 @@ const Student = () => {
                     id="reg_no"
                     name="reg_no"
                     onChange={handleLoginChange}
+                    onKeyPress={handleKeyPress}
                     placeholder="Enter Your Registeration Number"
                   />
                 </div>

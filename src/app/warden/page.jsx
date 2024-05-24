@@ -10,7 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+
+import axios from "axios";
 const Warden = () => {
+  const router = useRouter();
+  const { toast } = useToast();
   const login = {
     warden_id: "",
     password: "",
@@ -30,8 +36,35 @@ const Warden = () => {
       e.preventDefault();
     }
   };
-  const handleLoginSubmit = () => {
-    console.log(loginForm);
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await axios.post("http://localhost:3002/warden/login", {
+        wardenId: loginForm.warden_id,
+        password: loginForm.password,
+        type: "warden",
+      });
+      console.log(result);
+      const token = result.data.token;
+      localStorage.setItem("authToken", token);
+      toast({
+        duration: 3000,
+        variant: "success",
+        description: "Login Successful.",
+      });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/");
+        router.refresh();
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast({
+        duration: 3000,
+        variant: "destructive",
+        description: "Please Try Again.",
+      });
+    }
   };
   return (
     <div className="flex justify-center items-center my-[100px]">

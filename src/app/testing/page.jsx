@@ -1,10 +1,12 @@
 import React from "react";
-import StudentForm from "../(components)/StudentForm";
+import Status from "../(components)/Status";
+// import StudentForm from "../(components)/StudentForm";
 
 const page = () => {
   return (
     <div>
-      <StudentForm />
+      {/* <StudentForm /> */}
+      <Status />
     </div>
   );
 };
