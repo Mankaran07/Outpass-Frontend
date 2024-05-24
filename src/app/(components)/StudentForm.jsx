@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,50 +32,71 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
+
+const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli",
+  "Daman and Diu",
+  "Delhi",
+  "Lakshadweep",
+  "Puducherry",
+];
+
+
 const StudentForm = () => {
   const [date, setDate] = useState({
     from: new Date(2024, 4, 20),
     to: addDays(new Date(2024, 4, 20), 5),
   });
-  const indianStates = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Jammu and Kashmir",
-    "Ladakh",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli",
-    "Daman and Diu",
-    "Delhi",
-    "Lakshadweep",
-    "Puducherry",
-  ];
+
+
+  const [data, setData] = useState({
+    state: '',
+    zip: '',
+    modeOfTransport: '',
+    message: '',
+    permission: false
+  })
+
+  const handleClick = () => {
+    const finalData = {
+      ...date,
+      ...data,
+    }
+
+    console.log(finalData);
+  }
 
   return (
     <div className="m-[100px] flex justify-center items-center">
@@ -124,7 +145,10 @@ const StudentForm = () => {
             </Popover>
             <div>
               <Label htmlFor="State">State</Label>
-              <Select>
+              <Select
+                value={data.state}
+                onValueChange={(value) => setData((prev) => ({ ...prev, state: value }))}
+              >
                 <SelectTrigger className="w-[20vw]">
                   <SelectValue placeholder="State You Are Travelling" />
                 </SelectTrigger>
@@ -145,11 +169,17 @@ const StudentForm = () => {
                 id="zip"
                 placeholder="Enter The Zip Code"
                 className="w-[20vw]"
+                value={data.zip}
+                onChange={({ target: { name, value } }) => setData((prev) => ({ ...prev, zip: value }))}
               />
             </div>
             <div>
               <Label htmlFor="transport">Mode Of Transport</Label>
-              <Select>
+              <Select
+                value={data.modeOfTransport}
+                name="modeOfTransport"
+                onValueChange={(value) => setData((prev) => ({ ...prev, modeOfTransport: value }))}
+              >
                 <SelectTrigger className="w-[20vw]">
                   <SelectValue placeholder="Select Mode of Transport" />
                 </SelectTrigger>
@@ -170,10 +200,18 @@ const StudentForm = () => {
                 placeholder="Not More than 200 words"
                 id="message"
                 className="w-[20vw]"
+                name="message"
+                value={data.message}
+                onChange={({ target: { name, value } }) => setData((prev) => ({ ...prev, message: value }))}
               />
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox id="permission" />
+              <Checkbox
+                id="permission"
+                name="permission"
+                checked={data.permission}
+                onCheckedChange={(val) => setData((prev) => ({ ...prev, permission: val }))}
+              />
               <label
                 htmlFor="permission"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -184,7 +222,7 @@ const StudentForm = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button>Send Request</Button>
+          <Button onClick={handleClick}>Send Request</Button>
         </CardFooter>
       </Card>
     </div>
