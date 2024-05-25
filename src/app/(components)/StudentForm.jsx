@@ -31,7 +31,9 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const indianStates = [
   "Andhra Pradesh",
@@ -73,30 +75,63 @@ const indianStates = [
   "Puducherry",
 ];
 
-
 const StudentForm = () => {
+  const router = useRouter();
+  const { toast } = useToast();
   const [date, setDate] = useState({
     from: new Date(2024, 4, 20),
     to: addDays(new Date(2024, 4, 20), 5),
   });
 
-
   const [data, setData] = useState({
-    state: '',
-    zip: '',
-    modeOfTransport: '',
-    message: '',
-    permission: false
-  })
-
-  const handleClick = () => {
+    state: "",
+    zip: "",
+    modeOfTransport: "",
+    message: "",
+    permission: false,
+  });
+  const handleKeyPress = (e) => {
+    const allowedKeys = /[0-9\b]/;
+    if (!allowedKeys.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const handleClick = async (e) => {
     const finalData = {
       ...date,
       ...data,
+    };
+    e.preventDefault();
+    try {
+      const reg = localStorage.getItem("reg");
+      const result = await axios.post("http://localhost:3002/outpass/create", {
+        journey_from: finalData.from,
+        journey_to: finalData.to,
+        state: finalData.state,
+        zip: finalData.zip,
+        modeOfTransport: finalData.modeOfTransport,
+        reason: finalData.message,
+        student: reg,
+      });
+      toast({
+        duration: 3000,
+        variant: "success",
+        description: "Outpass Created Successfully.",
+      });
+      setTimeout(() => {
+        router.refresh();
+        router.push("/");
+        router.refresh();
+      }, 3000);
+    } catch (error) {
+      console.error(error);
+      toast({
+        duration: 3000,
+        variant: "destructive",
+        description: "Please Fill Correct Information.",
+      });
     }
-
-    console.log(finalData);
-  }
+  };
 
   return (
     <div className="m-[100px] flex justify-center items-center">
@@ -147,7 +182,9 @@ const StudentForm = () => {
               <Label htmlFor="State">State</Label>
               <Select
                 value={data.state}
-                onValueChange={(value) => setData((prev) => ({ ...prev, state: value }))}
+                onValueChange={(value) =>
+                  setData((prev) => ({ ...prev, state: value }))
+                }
               >
                 <SelectTrigger className="w-[20vw]">
                   <SelectValue placeholder="State You Are Travelling" />
@@ -170,7 +207,11 @@ const StudentForm = () => {
                 placeholder="Enter The Zip Code"
                 className="w-[20vw]"
                 value={data.zip}
-                onChange={({ target: { name, value } }) => setData((prev) => ({ ...prev, zip: value }))}
+                onKeyPress={handleKeyPress}
+                maxLength={6}
+                onChange={({ target: { name, value } }) =>
+                  setData((prev) => ({ ...prev, zip: value }))
+                }
               />
             </div>
             <div>
@@ -178,7 +219,9 @@ const StudentForm = () => {
               <Select
                 value={data.modeOfTransport}
                 name="modeOfTransport"
-                onValueChange={(value) => setData((prev) => ({ ...prev, modeOfTransport: value }))}
+                onValueChange={(value) =>
+                  setData((prev) => ({ ...prev, modeOfTransport: value }))
+                }
               >
                 <SelectTrigger className="w-[20vw]">
                   <SelectValue placeholder="Select Mode of Transport" />
@@ -202,7 +245,9 @@ const StudentForm = () => {
                 className="w-[20vw]"
                 name="message"
                 value={data.message}
-                onChange={({ target: { name, value } }) => setData((prev) => ({ ...prev, message: value }))}
+                onChange={({ target: { name, value } }) =>
+                  setData((prev) => ({ ...prev, message: value }))
+                }
               />
             </div>
             <div className="flex items-center space-x-2">
@@ -210,7 +255,9 @@ const StudentForm = () => {
                 id="permission"
                 name="permission"
                 checked={data.permission}
-                onCheckedChange={(val) => setData((prev) => ({ ...prev, permission: val }))}
+                onCheckedChange={(val) =>
+                  setData((prev) => ({ ...prev, permission: val }))
+                }
               />
               <label
                 htmlFor="permission"

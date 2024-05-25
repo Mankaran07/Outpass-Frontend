@@ -26,6 +26,9 @@ const Nav = () => {
           token: token,
         });
         setUser(data.data.data.type);
+        if (data.data.data.type == "student") {
+          localStorage.setItem("reg", data.data.data.registrationNumber);
+        }
         router.refresh();
         return;
       } catch (err) {
@@ -36,6 +39,7 @@ const Nav = () => {
   }, [pathname, refresh]);
   const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("reg");
     router.push("/");
     setRefresh((prev) => !prev);
   };

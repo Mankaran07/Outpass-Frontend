@@ -44,7 +44,6 @@ const Warden = () => {
         password: loginForm.password,
         type: "warden",
       });
-      console.log(result);
       const token = result.data.token;
       localStorage.setItem("authToken", token);
       toast({
