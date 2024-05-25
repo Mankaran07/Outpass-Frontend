@@ -7,50 +7,54 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import axios from "axios";
 
 const StatusPage = () => {
   const [data, setData] = useState([]);
-  const [message, setMessage] = useState("🟡 In Progress");
+
   useEffect(() => {
     const fetchOutpass = async () => {
       try {
         const id = localStorage.getItem("reg");
 
-        const data = await axios.get("http://localhost:3002/student/status", {
-          headers: {
-            id: id,
-          },
+        const response = await axios.get(
+          "http://localhost:3002/student/status",
+          {
+            headers: {
+              id: id,
+            },
+          }
+        );
+
+        const fetchedData = response.data.outpass;
+        console.log("Fetched Data:", fetchedData);
+
+        const updatedData = fetchedData.map((item) => {
+          const status = updateMessage(item);
+          return { ...item, status };
         });
-        setData(data.data.outpass);
+
+        setData(updatedData);
       } catch (error) {
         console.log(error);
       }
     };
-    const updateMessage = () => {
-      console.log(data);
-      if (data.statusByHod === "pending" && data.statusByWarden === "pending") {
-        setMessage("🟡 In Progress");
-        return;
-      } else if (
-        data.statusByHod === "rejected" ||
-        data.statusByWarden === "rejected"
-      ) {
-        setMessage("❌ Rejected");
-        return;
-      } else if (
-        data.statusByHod === "accepted" ||
-        data.statusByWarden === "accepted"
-      ) {
-        setMessage("✅ Accepted");
-        return;
-      }
-    };
-    fetchOutpass();
-    updateMessage();
-  }, [data]);
 
+    fetchOutpass();
+  }, []);
+
+  const updateMessage = (item) => {
+    const { statusByWarden, statusByHod } = item;
+
+    if (statusByHod === "pending" && statusByWarden === "pending") {
+      return "🟡 In Progress";
+    } else if (statusByHod === "rejected" || statusByWarden === "rejected") {
+      return "❌ Rejected";
+    } else if (statusByHod === "accepted" && statusByWarden === "accepted") {
+      return "✅ Accepted";
+    }
+    return "🟡 In Progress";
+  };
   return (
     <div className="mx-auto my-[80px]">
       <h1 className="text-center text-4xl font-semibold ">Requests</h1>
@@ -89,7 +93,9 @@ const StatusPage = () => {
               </div>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <h2 className="text-center text-xl font-semibold">{message}</h2>
+              <h2 className="text-center text-xl font-semibold">
+                {outpass.status}
+              </h2>
             </CardFooter>
           </Card>
         ))}
